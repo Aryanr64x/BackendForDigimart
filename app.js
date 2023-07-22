@@ -1,5 +1,4 @@
 import express from 'express';
-import mongoose from "mongoose";
 import assetRouter from "./routes/assetRouter.js";
 import  cors from 'cors'
 import {errorHandler} from "./controllers/errorController.js";
@@ -39,10 +38,6 @@ app.use(errorHandler);
 
 
 
-
-mongoose.connect("mongodb+srv://saket:annesha@cluster0.1z7vflv.mongodb.net/?retryWrites=true&w=majority", ()=>{
-    console.log("MongoDB is now running");
-})
 
 
 

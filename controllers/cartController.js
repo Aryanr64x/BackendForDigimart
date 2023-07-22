@@ -1,5 +1,4 @@
 import asyncHandler from 'express-async-handler';
-import Cart from '../models/Cart.js';
 
 import { prisma } from '../app.js';
 
