@@ -2,7 +2,7 @@
 
   "dependencies": {
 
-    "@prisma/client": "^5.0.0",
+    "@prisma/client": "^4.14.1",
 
     "bcrypt": "^5.1.0",
 
