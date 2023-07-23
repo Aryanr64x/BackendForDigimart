@@ -96,7 +96,7 @@ export const createAsset = (asyncHandler(async (req, res) => {
             summary: req.body.summary,
             title: req.body.title,
             dp: req.body.dp,
-            creator_id: req.body.user.id,
+            // creator_id: req.body.user.id,     
             priceId: price.id
         }
     })
