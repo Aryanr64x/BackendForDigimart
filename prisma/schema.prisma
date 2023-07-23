@@ -11,14 +11,15 @@ datasource db {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
-  customer_id String @unique
-  username   String
-  email      String @unique
-  password   String
-  created_at DateTime @default(now())
-  assets     Asset[]
-  reviews    Review[]
+  id            Int      @id @default(autoincrement())
+  customer_id   String   @unique
+  username      String
+  email         String   @unique
+  password      String
+  created_at    DateTime @default(now())
+  createdAssets Asset[] @relation("creation")
+  assets        Asset[]
+  reviews       Review[]
 }
 
 model Asset {
@@ -31,16 +32,20 @@ model Asset {
   priceId        String
   average_rating Int      @default(0)
   reviews_count  Int      @default(0)
+  creator        User     @relation(fields: [creator_id], references: [id], "creation") 
+  creator_id     Int
   users          User[]
   reviews        Review[]
 }
 
+
+
 model Review {
-  id    Int     @id @default(autoincrement())
-  user  User   @relation(fields: [user_id], references: [id])
-  user_id Int
-  Asset Asset @relation(fields: [asset_id], references: [id])
-  asset_id Int
-  body String
+  id         Int      @id @default(autoincrement())
+  user       User     @relation(fields: [user_id], references: [id])
+  user_id    Int
+  Asset      Asset    @relation(fields: [asset_id], references: [id])
+  asset_id   Int
+  body       String
   created_at DateTime @default(now())
 }
