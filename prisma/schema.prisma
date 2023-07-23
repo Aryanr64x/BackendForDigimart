@@ -32,7 +32,7 @@ model Asset {
   priceId        String
   average_rating Int      @default(0)
   reviews_count  Int      @default(0)
-  creator        User     @relation(fields: [creator_id], references: [id], "creation") 
+  creator        User     @relation("creation" ,fields: [creator_id], references: [id]) 
   creator_id     Int
   users          User[]
   reviews        Review[]
