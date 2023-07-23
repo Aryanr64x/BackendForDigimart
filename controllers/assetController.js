@@ -95,11 +95,11 @@ export const createAsset = (asyncHandler(async (req, res) => {
             price: req.body.price,
             summary: req.body.summary,
             title: req.body.title,
-            dp: req.body.dp,
-            creator_id: req.body.user.id,     
-            priceId: price.id
+            dp: req.body.dp,  
+            priceId: price.id,
+            creator_id: req.body.user.id
         }
     })
     
-    res.json("Success")
+    res.json(asset)
 }))

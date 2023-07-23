@@ -17,28 +17,28 @@ model User {
   email         String   @unique
   password      String
   created_at    DateTime @default(now())
-  createdAssets Asset[] @relation("creation")
-  assets        Asset[]
+  createdAssets Asset[]  @relation("UserOwnedAsset")
+  assets        Asset[]  @relation("cart")
   reviews       Review[]
 }
 
 model Asset {
-  id             Int      @id @default(autoincrement())
+  id             Int    @id @default(autoincrement())
   title          String
   description    String
   summary        String
   dp             String
   price          Int
   priceId        String
-  average_rating Int      @default(0)
-  reviews_count  Int      @default(0)
-  creator        User     @relation("creation" ,fields: [creator_id], references: [id]) 
-  creator_id     Int
-  users          User[]
-  reviews        Review[]
+  average_rating Int    @default(0)
+  reviews_count  Int    @default(0)
+
+  creator    User @relation("UserOwnedAsset", fields: [creator_id], references: [id])
+  creator_id Int
+
+  users   User[] @relation("cart")
+  reviews Review[]
 }
-
-
 
 model Review {
   id         Int      @id @default(autoincrement())
