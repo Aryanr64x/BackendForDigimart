@@ -100,5 +100,6 @@ export const createAsset = (asyncHandler(async (req, res) => {
             priceId: price.id
         }
     })
-    return asset
+    
+    res.json("Success")
 }))
