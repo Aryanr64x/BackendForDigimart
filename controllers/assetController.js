@@ -97,11 +97,14 @@ export const createAsset = (asyncHandler(async (req, res) => {
             title: req.body.title,
             dp: req.body.dp,
             priceId: price.id,
+            link: req.body.link, 
             creator: {
                 connect: { id: req.body.user.id } // Connects the asset to an existing user with the specified id
             }
         }
     })
 
-    res.json(req.body.user.id)
+    delete asset.link
+
+    res.json(asset)
 }))

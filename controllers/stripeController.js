@@ -2,11 +2,11 @@ import asyncHandler from 'express-async-handler';
 import nodemailer from 'nodemailer'
 import { v4 as uuidv4 } from 'uuid';
 
-import { s } from '../app.js'
+import { prisma, s } from '../app.js'
 
 
-const sendEmail = async (description, email) => {
-    const link = description.split(' ')[0]
+const sendEmail = async (links, email) => {
+
     let testAccount = await nodemailer.createTestAccount();
 
     let transporter = nodemailer.createTransport({
@@ -20,12 +20,20 @@ const sendEmail = async (description, email) => {
         },
     });
 
+
+
+    let linkString = ""
+    links.forEach((link) => {
+        linkString += link
+        linkString += " "
+    })
+
     try {
         let info = await transporter.sendMail({
             from: '"Team Digimart 👻" <aryansaketr64x@gmail.com>', // sender address
             to: email, // list of receivers
             subject: "Thanks for purchasing, Here is your link", // Subject line
-            text: "Here is the downloadable link to your product. Thanks for shopping at digimart " + link, // plain text body
+            text: "Here is the downloadable link to your product. Thanks for shopping at digimart " + linkString, // plain text body
 
         });
 
@@ -42,12 +50,23 @@ const sendEmail = async (description, email) => {
 
 export const pay = asyncHandler(async (req, res) => {
     const { lineItems } = req.body
+    const priceIds = []
+
+    lineItems.forEach((item) => {
+        priceIds.push(item.price)
+    })
+
+    console.log(priceIds)
     const session = await s.checkout.sessions.create({
         line_items: lineItems,
         customer: req.body.user.customer_id,
         mode: 'payment',
         success_url: "https://digimartt.netlify.app/success?session_id={CHECKOUT_SESSION_ID}",
-        cancel_url: 'http://digimartt.netlify.app/cancel'
+        cancel_url: 'http://digimartt.netlify.app/cancel',
+        metadata: {
+            priceIds: JSON.stringify(priceIds)
+        },
+
     })
     res.json({
         url: session.url
@@ -57,55 +76,24 @@ export const pay = asyncHandler(async (req, res) => {
 
 
 export const onSessionComplete = asyncHandler(async (req, res) => {
-    const event = req.body;
-
-    // Verify the event to ensure it's from Stripe
-    const stripeEvent = s.webhooks.constructEvent(
-        req.body,
-        req.headers['stripe-signature'],
-        'whsec_VgQ4c4f38Q2fFWN2rsOC2WDCvJl9Fe0R'
-    );
-
-    switch (stripeEvent.type) {
-        case 'checkout.session.completed':
-            const session = stripeEvent.data.object;
-            console.log('Payment successful. Send email to user:', session.customer_email);
-            break;
-        default:
-
-            console.log('Unhandled event type:', stripeEvent.type);
-            break;
-    }
-
+    const event = req.body.data.object;
+    const priceIds = JSON.parse(event.metadata.priceIds)
+    console.log("Now I am logging the JSON body")
+   
+    const links =  await prisma.asset.findMany({
+        where: {
+            priceId: {
+                in: priceIds
+            }
+        },
+        select: {
+            link: true
+        }
+    })
+    //extract links from assets put it in links and send it to mail
+    await sendEmail(links, event.customer_details.email);
     res.json("completed successfuly")
 })
 
 
 
-export const success = asyncHandler(async (req, res) => {
-    const session = await s.checkout.sessions.retrieve(req.body.session_id);
-    s.checkout.sessions.listLineItems(
-        req.body.session_id,
-        {},
-        function (err, lineItems) {
-            if (!err) {
-                lineItems.data.forEach(async (lineItem) => {
-
-                    const isSuccess = await sendEmail(lineItem.description, req.body.user.email)
-
-                    if (isSuccess) {
-                        return res.status(200).json({ message: "Link Successfully sent", tag: "SENT" })
-
-                    } else {
-                        res.status(400).json({ message: "CANNOT SEND MESSAGE" });
-                    }
-                })
-            } else {
-                res.status(400).json({
-                    message: "Something went wrong"
-                })
-            }
-        }
-    );
-
-})
