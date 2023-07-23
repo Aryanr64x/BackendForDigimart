@@ -5,48 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { prisma, s } from '../app.js'
 
 
-const sendEmail = async (links, email) => {
 
-    let testAccount = await nodemailer.createTestAccount();
-
-    let transporter = nodemailer.createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
-
-        secure: false, // true for 465, false for other ports
-        auth: {
-            user: testAccount.user, // generated ethereal user
-            pass: testAccount.pass, // generated ethereal password
-        },
-    });
-
-
-
-    let linkString = ""
-    links.forEach((link) => {
-        linkString += link
-        linkString += " "
-    })
-
-    try {
-        let info = await transporter.sendMail({
-            from: '"Team Digimart 👻" <aryansaketr64x@gmail.com>', // sender address
-            to: email, // list of receivers
-            subject: "Thanks for purchasing, Here is your link", // Subject line
-            text: "Here is the downloadable link to your product. Thanks for shopping at digimart " + linkString, // plain text body
-
-        });
-
-        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-        return true
-    } catch (e) {
-        console.log(e)
-        return false
-    }
-
-
-
-}
 
 export const pay = asyncHandler(async (req, res) => {
     const { lineItems } = req.body
@@ -97,3 +56,47 @@ export const onSessionComplete = asyncHandler(async (req, res) => {
 
 
 
+// Utility function that sends an email of the product link to the customer
+
+const sendEmail = async (links, email) => {
+
+    let testAccount = await nodemailer.createTestAccount();
+
+    let transporter = nodemailer.createTransport({
+        host: "smtp.ethereal.email",
+        port: 587,
+
+        secure: false, // true for 465, false for other ports
+        auth: {
+            user: testAccount.user, // generated ethereal user
+            pass: testAccount.pass, // generated ethereal password
+        },
+    });
+
+
+
+    let linkString = ""
+    links.forEach((link) => {
+        linkString += link
+        linkString += " "
+    })
+
+    try {
+        let info = await transporter.sendMail({
+            from: '"Team Digimart 👻" <aryansaketr64x@gmail.com>', // sender address
+            to: email, // list of receivers
+            subject: "Thanks for purchasing, Here is your link", // Subject line
+            text: "Here is the downloadable link to your product. Thanks for shopping at digimart " + linkString, // plain text body
+
+        });
+
+        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+        return true
+    } catch (e) {
+        console.log(e)
+        return false
+    }
+
+
+
+}
