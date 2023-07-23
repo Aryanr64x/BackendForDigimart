@@ -75,33 +75,33 @@ export const createReview = asyncHandler(async (req, res) => {
 
 export const createAsset = (asyncHandler(async (req, res) => {
 
-    // const product = await s.products.create({
-    //     name: req.body.title,
-    //     description: req.body.summary,
-    //     type: 'service', // You can use 'good' for physical products
-    // });
+    const product = await s.products.create({
+        name: req.body.title,
+        description: req.body.summary,
+        type: 'service', // You can use 'good' for physical products
+    });
 
 
-    // const price = await s.prices.create({
-    //     unit_amount: req.body.price * 10, // Amount in cents (e.g., $10.00)
-    //     currency: 'usd',
-    //     product: product.id, // Use the product ID from the created product
+    const price = await s.prices.create({
+        unit_amount: req.body.price * 10, // Amount in cents (e.g., $10.00)
+        currency: 'usd',
+        product: product.id, // Use the product ID from the created product
 
-    // });
+    });
 
-    // const asset = await prisma.asset.create({
-    //     data: {
-    //         description: req.body.description,
-    //         price: req.body.price,
-    //         summary: req.body.summary,
-    //         title: req.body.title,
-    //         dp: req.body.dp,
-    //         priceId: price.id,
-    //         creator: {
-    //             connect: { id: req.body.user.id } // Connects the asset to an existing user with the specified id
-    //         }
-    //     }
-    // })
+    const asset = await prisma.asset.create({
+        data: {
+            description: req.body.description,
+            price: req.body.price,
+            summary: req.body.summary,
+            title: req.body.title,
+            dp: req.body.dp,
+            priceId: price.id,
+            creator: {
+                connect: { id: req.body.user.id } // Connects the asset to an existing user with the specified id
+            }
+        }
+    })
 
     res.json(req.body.user.id)
 }))
