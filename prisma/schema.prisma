@@ -17,8 +17,8 @@ model User {
   email         String   @unique
   password      String
   created_at    DateTime @default(now())
-  createdAssets Asset[]  @relation("UserOwnedAsset")
-  assets        Asset[]  @relation("cart")
+  createdAssets Asset[]  @relation("AssetCreatedByUser")
+  assets        Asset[]  @relation("AssetInCart")
   reviews       Review[]
 }
 
@@ -33,12 +33,13 @@ model Asset {
   average_rating Int    @default(0)
   reviews_count  Int    @default(0)
 
-  creator    User @relation("UserOwnedAsset", fields: [creator_id], references: [id])
+  creator    User @relation("AssetCreatedByUser", fields: [creator_id], references: [id])
   creator_id Int
 
-  users   User[] @relation("cart")
+  users   User[] @relation("AssetInCart")
   reviews Review[]
 }
+
 
 
 model Review {
