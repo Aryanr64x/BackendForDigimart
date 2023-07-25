@@ -30,7 +30,7 @@ model Asset {
   dp             String
   price          Int
   priceId        String @unique
-  link String
+  link           String
   average_rating Int    @default(0)
   reviews_count  Int    @default(0)
 
