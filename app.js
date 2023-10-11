@@ -10,7 +10,7 @@ import  stripe from 'stripe'
 import { PrismaClient } from '@prisma/client';
 export const prisma = new PrismaClient()
 
-export const s = stripe('sk_test_51MK8E9SC0omau1AF0XJP8I6wsS1pEidot6PLVcA1GT7PuRAEiNZgBXfiA0yAUIR7ceuVkB4YPGdZd7xBOACzFaOK00wnbVmbBM')
+export const s = stripe(process.env.STRIPE_SECRET)
 
 
 const app = express();
